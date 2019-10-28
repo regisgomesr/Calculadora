@@ -1,7 +1,45 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react'
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 
 export default class App extends React.Component {
+  constructor(props){
+    super(props)
+    this.state = {
+      display: '',
+      result: ''
+    }
+  }
+
+  handleOp(op){
+    if(op === 'C'){
+      this.setState({
+        display: '',
+        result: ''
+      })
+    }else if(op === '='){
+      this.setState({
+        display: this.state.result,
+        result: ''
+      })
+    }else{
+      const display = this.state.display + op
+      let result = this.state.result
+
+      try{
+        let fixedOperation = display.split('x').join('*')
+        fixedOperation = fixedOperation.split('÷').join('/')
+        fixedOperation = fixedOperation.split(',').join('.')
+        result = new String(eval(fixedOperation)).toString()
+      }catch(e){}
+
+      this.setState({
+        display,
+        result
+      })
+    }
+    
+  }
+
   render() {
 
   const col1Buttons = [
@@ -15,8 +53,8 @@ export default class App extends React.Component {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.display}>Display</Text>
-      <Text style={styles.result}>result</Text>
+      <Text style={styles.display}>{this.state.display}</Text>
+      <Text style={styles.result}>{this.state.result}</Text>
       
       <View style={styles.buttons}>
 
@@ -24,9 +62,9 @@ export default class App extends React.Component {
 
           { col1Buttons.map( (line,ind) => 
             <View key={ind} style={styles.line}>
-              { line.map( op => <View key={op} style={styles.btn}> 
+              { line.map( op => <TouchableOpacity key={op} style={styles.btn} onPress={ () => this.handleOp(op) } > 
                                   <Text style={styles.btnText}>{ op }</Text> 
-                                </View>
+                                </TouchableOpacity>
               ) }
             </View>
           )}
@@ -34,9 +72,9 @@ export default class App extends React.Component {
         </View>
 
         <View style={styles.col2}>
-          { col2Buttons.map( op => <View key={op} style={styles.btn}>
+          { col2Buttons.map( op => <TouchableOpacity key={op} style={styles.btn} onPress={ () => this.handleOp(op) } >
                                       <Text style={styles.btnText}>{ op }</Text>
-                                    </View>
+                                    </TouchableOpacity>
           ) }
         </View>
 
@@ -52,7 +90,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'stretch',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   display: {
     flex: 1,
@@ -60,7 +98,7 @@ const styles = StyleSheet.create({
     fontSize: 60,
     textAlign: 'right',
     paddingTop: 20,
-    paddingRight: 10,
+    paddingRight: 10
   },
   result: {
     flex: 0.4,
@@ -68,7 +106,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     textAlign: 'right',
     paddingRight: 10,
-    paddingBottom: 10,
+    paddingBottom: 10
   },
   buttons: {
     flex: 5,
@@ -76,7 +114,7 @@ const styles = StyleSheet.create({
   },
   col1: {
     flex: 3,
-    backgroundColor: 'grey'
+    backgroundColor: '#000000'
   },
   line: {
     flex: 1,
@@ -89,9 +127,10 @@ const styles = StyleSheet.create({
   btnText: {
     textAlign: 'center',
     fontSize: 50,
+    color: 'white'
   },
   col2: {
     flex: 1,
-    backgroundColor: 'red'
+    backgroundColor: '#0b0b0b'
   }
-});
+})
